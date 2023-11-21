@@ -3,7 +3,9 @@
     "remix.env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/routes/projects._index"
+    "app/routes/projects._index",
+    "tailwind.config.js",
+    "postcss.config.js"
   ],
   "compilerOptions": {
     "lib": [
