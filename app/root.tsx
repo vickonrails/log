@@ -75,7 +75,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-gray-100">
         <Outlet context={{ supabase }} />
         <ScrollRestoration />
         <Scripts />
