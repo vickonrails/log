@@ -54,7 +54,7 @@ export default function Project() {
                     <p>{project?.description}</p>
                 </div>
                 <div className="flex justify-end">
-                    <Button>New Task</Button>
+                    <Button size='sm'>New Task</Button>
                 </div>
                 <TasksKanban />
             </section>

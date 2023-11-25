@@ -1,8 +1,10 @@
 import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node"
-import { Form, useLoaderData, useNavigation } from "@remix-run/react"
+import { useLoaderData } from "@remix-run/react"
 import { useState } from "react"
 import { supabaseClient } from "utils/supabase"
 import { v4 as uuid } from 'uuid'
+import CreateProjectDialog from "~/components/kanban/create-project-dialog"
+import { Button } from "~/components/ui/button"
 import Table from "~/components/ui/table"
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -35,34 +37,44 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function Projects() {
     const { projects } = useLoaderData<typeof loader>()
+    const [modalOpen, setModalOpen] = useState(false);
+
     return (
         <section className=" flex flex-col gap-4">
             <nav className="border-b p-4">
                 <h1 className="text-xl font-medium">Projects</h1>
             </nav>
-            <section className="p-4">
-                {/* <Button>New Project</Button> */}
+            <section className="p-4 flex flex-col gap-2">
+                <div className="flex justify-end">
+                    <Button
+                        size='sm'
+                        onClick={() => setModalOpen(true)}
+                    >
+                        New Project
+                    </Button>
+                </div>
                 {projects && <Table projects={projects} />}
-                {/* <ProjectForm /> */}
-                {/* <div className="flex flex-col gap-2">
-                    {projects?.map(project => (<Link className="inline-block underline" to={`/app/projects/${project.id}`} key={project.id}>{project.title}</Link>))}
-                </div> */}
             </section>
+            {/* TODO: close the form after the project is created */}
+            <CreateProjectDialog
+                open={modalOpen}
+                onOpenChange={setModalOpen}
+            />
         </section>
     )
 }
 
-function ProjectForm() {
-    const [description, setDescription] = useState('')
-    const [title, setTitle] = useState('')
-    const navigate = useNavigation()
-    const isSubmitting = navigate.state === 'submitting'
+// function ProjectForm() {
+//     const [description, setDescription] = useState('')
+//     const [title, setTitle] = useState('')
+//     const navigate = useNavigation()
+//     const isSubmitting = navigate.state === 'submitting'
 
-    return (
-        <Form method="POST" className="flex flex-col gap-4 items-start">
-            <input className="border px-3 py-2 w-full" name="title" id="title" placeholder="Title" value={title} onChange={ev => setTitle(ev.target.value)} />
-            <textarea value={description} onChange={ev => setDescription(ev.target.value)} className="border px-3 py-2 w-full" name="title" id="description" placeholder="Description" />
-            <button className="bg-gray-200 border px-5 py-1 disabled:pointer-events-none disabled:opacity-50" disabled={isSubmitting}>{isSubmitting ? 'Creating' : 'Create'}</button>
-        </Form>
-    )
-}
+//     return (
+//         <Form method="POST" className="flex flex-col gap-4 items-start">
+//             <input className="border px-3 py-2 w-full" name="title" id="title" placeholder="Title" value={title} onChange={ev => setTitle(ev.target.value)} />
+//             <textarea value={description} onChange={ev => setDescription(ev.target.value)} className="border px-3 py-2 w-full" name="title" id="description" placeholder="Description" />
+//             <button className="bg-gray-200 border px-5 py-1 disabled:pointer-events-none disabled:opacity-50" disabled={isSubmitting}>{isSubmitting ? 'Creating' : 'Create'}</button>
+//         </Form>
+//     )
+// }
