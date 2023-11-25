@@ -1,12 +1,13 @@
 import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node"
-import { Form, Link, useLoaderData, useNavigation } from "@remix-run/react"
+import { Form, useLoaderData, useNavigation } from "@remix-run/react"
 import { useState } from "react"
 import { supabaseClient } from "utils/supabase"
 import { v4 as uuid } from 'uuid'
+import Table from "~/components/ui/table"
 
 export async function loader({ request }: LoaderFunctionArgs) {
     const client = supabaseClient({ request })
-    const { data: projects } = await client.from('projects').select('*')
+    const { data: projects } = await client.from('projects').select(`*`);
     return json({ projects })
 }
 
@@ -35,12 +36,18 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function Projects() {
     const { projects } = useLoaderData<typeof loader>()
     return (
-        <section className="p-4 flex flex-col gap-4 max-w-sm">
-            <h1 className="text-xl font-medium mb-3">Projects</h1>
-            <ProjectForm />
-            <div className="flex flex-col gap-2">
-                {projects?.map(project => (<Link className="inline-block underline" to={`/projects/${project.id}`} key={project.id}>{project.title}</Link>))}
-            </div>
+        <section className=" flex flex-col gap-4">
+            <nav className="border-b p-4">
+                <h1 className="text-xl font-medium">Projects</h1>
+            </nav>
+            <section className="p-4">
+                {/* <Button>New Project</Button> */}
+                {projects && <Table projects={projects} />}
+                {/* <ProjectForm /> */}
+                {/* <div className="flex flex-col gap-2">
+                    {projects?.map(project => (<Link className="inline-block underline" to={`/app/projects/${project.id}`} key={project.id}>{project.title}</Link>))}
+                </div> */}
+            </section>
         </section>
     )
 }

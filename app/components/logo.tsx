@@ -1,9 +1,9 @@
-import React from 'react'
 
 export default function Logo() {
     return (
-        <section>
-            <div>Log</div>
+        <section className='flex items-center gap-2'>
+            <div className='h-8 w-8 bg-red-300' />
+            <p className='font-medium select-none'>Log</p>
         </section>
     )
 }

@@ -51,6 +51,7 @@ export interface Database {
           description: string | null
           id: string
           startdate: string | null
+          status: number
           title: string | null
           updated_at: string | null
         }
@@ -60,6 +61,7 @@ export interface Database {
           description?: string | null
           id: string
           startdate?: string | null
+          status?: number
           title?: string | null
           updated_at?: string | null
         }
@@ -69,6 +71,7 @@ export interface Database {
           description?: string | null
           id?: string
           startdate?: string | null
+          status?: number
           title?: string | null
           updated_at?: string | null
         }
@@ -123,67 +126,6 @@ export interface Database {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
-      work_sessions: {
-        Row: {
-          created_at: string | null
-          creator_id: string
-          description: string | null
-          duration: number | null
-          endtime: string | null
-          id: string
-          project_id: string
-          task_id: string
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          creator_id: string
-          description?: string | null
-          duration?: number | null
-          endtime?: string | null
-          id: string
-          project_id: string
-          task_id: string
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          creator_id?: string
-          description?: string | null
-          duration?: number | null
-          endtime?: string | null
-          id?: string
-          project_id?: string
-          task_id?: string
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "work_sessions_creator_id_fkey"
-            columns: ["creator_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "work_sessions_project_id_fkey"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "work_sessions_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
             referencedColumns: ["id"]
           }
         ]

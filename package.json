@@ -12,6 +12,7 @@
     "types:gen": "npx supabase gen types typescript --project-id"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2",
     "@remix-run/css-bundle": "^2.3.0",
     "@remix-run/node": "^2.3.0",
     "@remix-run/react": "^2.3.0",
@@ -19,9 +20,15 @@
     "@supabase/auth-helpers-remix": "^0.2.6",
     "@supabase/supabase-js": "^2.38.5",
     "@types/uuid": "^9.0.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.0.0",
     "isbot": "^3.6.8",
+    "lucide-react": "^0.292.0",
+    "ms": "^2.1.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tailwind-merge": "^2.0.0",
+    "tailwindcss-animate": "^1.0.7",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
