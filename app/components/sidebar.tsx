@@ -43,7 +43,7 @@ function NavGroupHeading({ title }: { title: string }) {
 
 function NavItem({ title, to, Icon, onClick }: { title: string, to?: string, Icon: LucideIcon, onClick?: () => void }) {
     const { pathname } = useLocation()
-    const isChildRoute = pathname.startsWith(to)
+    const isChildRoute = to && pathname.startsWith(to)
 
     return (
         <Link className={cn('px-3 py-2 rounded-sm flex items-center text-muted-foreground', isChildRoute ? 'bg-primary text-primary-foreground' : 'hover:bg-blue-50')} to={to} onClick={onClick}>

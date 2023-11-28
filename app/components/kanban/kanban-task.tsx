@@ -7,7 +7,7 @@ export default function KanbanTask({ task, index }: { task: TasksForKanban, inde
         <Draggable draggableId={task.id} index={index}>
             {(provided, snapshot) => (
                 <div
-                    className={cn('border rounded-sm select-none p-4 py-3 bg-white text-sm rotate-0 transition-all', snapshot.isDragging && 'bg-gray-100 rotate-12')}
+                    className={cn('border rounded-sm select-none p-4 py-3 bg-white text-sm', snapshot.isDragging && 'bg-gray-100')}
                     ref={provided.innerRef}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}

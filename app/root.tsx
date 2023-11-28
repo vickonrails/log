@@ -46,7 +46,6 @@ export default function App() {
   const { env, session } = useLoaderData<typeof loader>()
   const { revalidate } = useRevalidator()
   const [supabase] = useState(() =>
-    // createBrowserClient<Database>(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
     createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   )
 

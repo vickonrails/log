@@ -10,7 +10,7 @@ export default function Column({ column }: { column: KanbanColumn }) {
             <Droppable droppableId={column.id}>
                 {(provided, snapshot) => (
                     <div
-                        className={cn('flex flex-col gap-2 h-full', snapshot.isDraggingOver && 'bg-gray-200')}
+                        className={cn('flex flex-col gap-2 min-h-[100px] transition-colors duration-0', snapshot.isDraggingOver && 'bg-gray-200')}
                         ref={provided.innerRef}
                         {...provided.droppableProps}
                     >

@@ -50,7 +50,7 @@ export interface Database {
           creator_id: string
           description: string | null
           id: string
-          startdate: string | null
+          start_date: string | null
           status: number
           title: string | null
           updated_at: string | null
@@ -60,7 +60,7 @@ export interface Database {
           creator_id: string
           description?: string | null
           id: string
-          startdate?: string | null
+          start_date?: string | null
           status?: number
           title?: string | null
           updated_at?: string | null
@@ -70,7 +70,7 @@ export interface Database {
           creator_id?: string
           description?: string | null
           id?: string
-          startdate?: string | null
+          start_date?: string | null
           status?: number
           title?: string | null
           updated_at?: string | null
@@ -87,6 +87,7 @@ export interface Database {
       }
       tasks: {
         Row: {
+          column_order: number
           created_at: string | null
           creator_id: string
           description: string | null
@@ -97,6 +98,7 @@ export interface Database {
           updated_at: string | null
         }
         Insert: {
+          column_order?: number
           created_at?: string | null
           creator_id: string
           description?: string | null
@@ -107,6 +109,7 @@ export interface Database {
           updated_at?: string | null
         }
         Update: {
+          column_order?: number
           created_at?: string | null
           creator_id?: string
           description?: string | null
