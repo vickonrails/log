@@ -4,6 +4,7 @@ import { useState } from "react"
 import { supabaseClient } from "utils/supabase"
 import { v4 as uuid } from 'uuid'
 import CreateProjectDialog from "~/components/kanban/create-project-dialog"
+import Logo from "~/components/logo"
 import { Button } from "~/components/ui/button"
 import Table from "~/components/ui/table"
 
@@ -41,10 +42,10 @@ export default function Projects() {
 
     return (
         <section className=" flex flex-col gap-4">
-            <nav className="border-b p-4">
-                <h1 className="text-xl font-medium">Projects</h1>
-            </nav>
             <section className="p-4 flex flex-col gap-2">
+                <div className="pt-4 pb-4">
+                    <Logo />
+                </div>
                 <div className="flex justify-end">
                     <Button
                         size='sm'

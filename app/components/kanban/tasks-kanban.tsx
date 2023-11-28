@@ -54,11 +54,12 @@ const columns: KanbanColumn[] = [
 
 export type TasksForKanban = Pick<Task, 'id' | 'title' | 'description' | 'status' | 'updated_at' | 'column_order'>
 
-export default function TasksKanban({ tasks }: { tasks: TasksForKanban[] }) {
+export default function TasksKanban({ tasks, readonly = false }: { tasks: TasksForKanban[], readonly?: boolean }) {
     const { supabase } = useOutletContext<{ supabase: SupabaseClient }>()
     const [kanbanColumns, setKanbanColumns] = useState(columns)
     const [syncing, setSyncing] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
+    const hidden = !readonly
 
     useEffect(() => {
         setKanbanColumns(transformTasks(tasks, columns))
@@ -160,13 +161,15 @@ export default function TasksKanban({ tasks }: { tasks: TasksForKanban[] }) {
     return (
         <>
             <DragDropContext onDragEnd={onDragEnd}>
-                <div className="flex justify-between items-center">
-                    <LucideLoader size={18} className={cn('transition-opacity ', syncing ? 'opacity-100 animate-spin' : 'opacity-0')} />
-                    <Button size='sm' onClick={() => setModalOpen(true)}>New Task</Button>
-                </div>
+                {hidden && (
+                    <div className={cn('flex justify-between items-center')}>
+                        <LucideLoader size={18} className={cn('transition-opacity ', syncing ? 'opacity-100 animate-spin' : 'opacity-0')} />
+                        <Button size='sm' onClick={() => setModalOpen(true)}>New Task</Button>
+                    </div>
+                )}
                 <div className='flex gap-2 h-full'>
                     {kanbanColumns.map(column => {
-                        return <Column key={column.id} column={column} />;
+                        return <Column key={column.id} column={column} readonly={readonly} />;
                     })}
                 </div>
             </DragDropContext>

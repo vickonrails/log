@@ -2,9 +2,9 @@ import { Draggable } from 'react-beautiful-dnd';
 import { cn } from 'utils/cn';
 import type { TasksForKanban } from './tasks-kanban';
 
-export default function KanbanTask({ task, index }: { task: TasksForKanban, index: number }) {
+export default function KanbanTask({ task, index, readonly }: { task: TasksForKanban, index: number, readonly: boolean }) {
     return (
-        <Draggable draggableId={task.id} index={index}>
+        <Draggable draggableId={task.id} index={index} isDragDisabled={readonly}>
             {(provided, snapshot) => (
                 <div
                     className={cn('border rounded-sm select-none p-4 py-3 bg-white text-sm', snapshot.isDragging && 'bg-gray-100')}

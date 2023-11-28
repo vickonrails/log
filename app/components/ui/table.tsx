@@ -24,9 +24,9 @@ export default function Table({ projects }: { projects: Project[] }) {
                     const createdDate = new Date(project.created_at!).getTime()
                     const created_at = project.created_at ? ms(Date.now() - createdDate, { long: true }) : ''
                     return (
-                        <tr key={project.id} onClick={() => navigate(`/app/projects/${project.id}`)} className={cn('border-b border text-muted-foreground hover:bg-blue-50', idx % 2 && 'bg-gray-50')}>
+                        <tr key={project.id} onClick={() => navigate(`/app/projects/${project.id}/tracker`)} className={cn('border-b border text-muted-foreground hover:bg-blue-50', idx % 2 && 'bg-gray-50')}>
                             <td className="p-4 py-3">{project.title}</td>
-                            <td className="p-4 py-3">{project.startdate ?? '-'}</td>
+                            <td className="p-4 py-3">{project.start_date ?? '-'}</td>
                             <td className="p-4 py-3">-</td>
                             <td className="p-4 py-3">{created_at} ago</td>
                             <td className="p-4 py-3"><Status status={project.status} /></td>
