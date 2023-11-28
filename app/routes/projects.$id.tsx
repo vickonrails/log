@@ -32,7 +32,7 @@ export default function ProjectDetails() {
             <section className="flex flex-col gap-2 h-[80%] max-w-6xl mx-auto mt-3">
                 <div className="mb-2">
                     <h1 className="text-xl font-medium mb-2">{project?.title}</h1>
-                    <p>{project?.description}</p>
+                    <p className="text-muted-foreground">{project?.description}</p>
                 </div>
 
                 <Outlet context={{ supabase }} />

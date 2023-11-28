@@ -9,6 +9,44 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      feature_requests: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          project_id: string
+          title: string | null
+          updated_at: string | null
+          upvotes: number
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id: string
+          project_id: string
+          title?: string | null
+          updated_at?: string | null
+          upvotes?: number
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          project_id?: string
+          title?: string | null
+          updated_at?: string | null
+          upvotes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feature_requests_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
