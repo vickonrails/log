@@ -92,6 +92,7 @@ export interface Database {
           description: string | null
           id: string
           project_id: string
+          status: number
           title: string | null
           updated_at: string | null
         }
@@ -101,6 +102,7 @@ export interface Database {
           description?: string | null
           id: string
           project_id: string
+          status?: number
           title?: string | null
           updated_at?: string | null
         }
@@ -110,6 +112,7 @@ export interface Database {
           description?: string | null
           id?: string
           project_id?: string
+          status?: number
           title?: string | null
           updated_at?: string | null
         }

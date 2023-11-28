@@ -1,70 +1,128 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import type { Task } from 'types';
+import { v4 as uuid } from 'uuid';
 import Column from './kanban-column';
 
-export type ColumnProps = { id: string, title: string, taskIds: string[] }
-
-interface Column<T> {
-    columns: {
-        [key: string]: ColumnProps
-    },
-    tasks: {
-        [key: string]: T
-    },
-    columnOrder: string[]
+enum TaskStatus {
+    Planned,
+    Next,
+    InProgress,
+    Done
+}
+export interface KanbanColumn {
+    id: string,
+    title: string,
+    columnStatus: TaskStatus,
+    tasks: TasksForKanban[]
 }
 
-const initialData: Column<Task> = {
-    tasks: {
-        'task-1': { id: 'task-1', title: 'Get out the trash', description: 'Take out the garbage', project_id: '1', created_at: '2021-08-01T00:00:00.000Z', updated_at: '2021-08-01T00:00:00.000Z', creator_id: '' },
-        'task-2': { id: 'task-2', title: 'Do something more', description: 'Take out the garbage', project_id: '1', created_at: '2021-08-01T00:00:00.000Z', updated_at: '2021-08-01T00:00:00.000Z', creator_id: '' },
-        'task-3': { id: 'task-3', title: 'Not sure anymore how I can do this', description: 'Take out the garbage', project_id: '1', created_at: '2021-08-01T00:00:00.000Z', updated_at: '2021-08-01T00:00:00.000Z', creator_id: '' },
-        'task-4': { id: 'task-4', title: 'Not sure anymore how I can do this', description: 'Take out the garbage', project_id: '1', created_at: '2021-08-01T00:00:00.000Z', updated_at: '2021-08-01T00:00:00.000Z', creator_id: '' },
-        'task-5': { id: 'task-5', title: 'Not sure anymore how I can do this', description: 'Take out the garbage', project_id: '1', created_at: '2021-08-01T00:00:00.000Z', updated_at: '2021-08-01T00:00:00.000Z', creator_id: '' },
+const columns: KanbanColumn[] = [
+    {
+        id: uuid(),
+        title: 'Planned',
+        columnStatus: TaskStatus.Planned,
+        tasks: [],
     },
-    columns: {
-        'column-1': {
-            id: 'column-1',
-            title: 'Planned',
-            taskIds: ['task-1', 'task-2'],
-        },
-        'column-2': {
-            id: 'column-2',
-            title: 'Next',
-            taskIds: ['task-3']
-        },
-        'column-3': {
-            id: 'column-3',
-            title: 'In Progress',
-            taskIds: ['task-4']
-        },
-        'column-4': {
-            id: 'column-4',
-            title: 'Done',
-            taskIds: ['task-5']
-        },
+    {
+        id: uuid(),
+        title: 'Next',
+        columnStatus: TaskStatus.Next,
+        tasks: []
     },
-    columnOrder: ['column-1', 'column-2', 'column-3', 'column-4'],
-};
+    {
+        id: uuid(),
+        title: 'In Progress',
+        columnStatus: TaskStatus.InProgress,
+        tasks: []
+    },
+    {
+        id: uuid(),
+        title: 'Done',
+        columnStatus: TaskStatus.Done,
+        tasks: []
+    }
+];
 
+function transformTasks(tasks: TasksForKanban[]) {
+    // console.log(tasks)
+    const taskCols: KanbanColumn[] = columns.map(col => ({ ...col, tasks: [] }))
+    tasks.forEach(task => {
+        taskCols[task.status].tasks.push(task)
+    })
 
-export default function TasksKanban() {
-    const [kanbanData, setKanbanData] = useState(initialData)
+    return taskCols
+}
+
+export type TasksForKanban = Pick<Task, 'id' | 'title' | 'description' | 'status'>
+
+export default function TasksKanban({ tasks }: { tasks: TasksForKanban[] }) {
+    const [kanbanColumns, setKanbanColumns] = useState(columns)
+
+    useEffect(() => {
+        setKanbanColumns(transformTasks(tasks))
+    }, [tasks])
 
     const onDragEnd = (result: any) => {
-        // alert something wrong
-        console.log(`Drag has ended`)
+        const { destination, source } = result;
+
+        if (!destination) return;
+
+        if (
+            destination.droppableId === source.droppableId &&
+            destination.index === source.index
+        ) return;
+
+        const start = kanbanColumns.find(col => col.id === source.droppableId);
+        const finish = kanbanColumns.find(col => col.id === destination.droppableId);
+
+        if (start === finish) {
+            const newTasks = Array.from(start!.tasks);
+            const [removed] = newTasks.splice(source.index, 1);
+            newTasks.splice(destination.index, 0, removed);
+
+            const newColumn = {
+                ...start!,
+                tasks: newTasks
+            }
+
+            // This is an optimistic update
+            setKanbanColumns(kanbanColumns.map(col => col.id === newColumn.id ? newColumn : col))
+            // this is where I do the actual update
+            // fallback if the update doesn't happen
+            return;
+        }
+
+        const startTasks = Array.from(start!.tasks);
+        const [removed] = startTasks.splice(source.index, 1);
+        const newStart = {
+            ...start!,
+            tasks: startTasks
+        }
+
+        const finishTasks = Array.from(finish!.tasks);
+        finishTasks.splice(destination.index, 0, removed);
+        const newFinish = {
+            ...finish!,
+            tasks: finishTasks
+        }
+
+        // this is also an optimistic update
+        setKanbanColumns(kanbanColumns.map(col => {
+            if (col.id === newStart.id) return newStart
+            if (col.id === newFinish.id) return newFinish
+            return col
+        }))
+
+        // this is where I make the actual API call
+        // fallback if the update doesn't happen
     }
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <div className='flex gap-2 h-full'>
-                {kanbanData.columnOrder.map(columnId => {
-                    const column = kanbanData.columns[columnId];
-                    const tasks = column.taskIds.map(taskId => kanbanData.tasks[taskId]);
-
-                    return <Column key={column.id} column={column} tasks={tasks} />;
+                {kanbanColumns.map(column => {
+                    return <Column key={column.id} column={column} />;
                 })}
             </div>
         </DragDropContext>

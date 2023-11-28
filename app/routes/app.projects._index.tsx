@@ -63,18 +63,3 @@ export default function Projects() {
         </section>
     )
 }
-
-// function ProjectForm() {
-//     const [description, setDescription] = useState('')
-//     const [title, setTitle] = useState('')
-//     const navigate = useNavigation()
-//     const isSubmitting = navigate.state === 'submitting'
-
-//     return (
-//         <Form method="POST" className="flex flex-col gap-4 items-start">
-//             <input className="border px-3 py-2 w-full" name="title" id="title" placeholder="Title" value={title} onChange={ev => setTitle(ev.target.value)} />
-//             <textarea value={description} onChange={ev => setDescription(ev.target.value)} className="border px-3 py-2 w-full" name="title" id="description" placeholder="Description" />
-//             <button className="bg-gray-200 border px-5 py-1 disabled:pointer-events-none disabled:opacity-50" disabled={isSubmitting}>{isSubmitting ? 'Creating' : 'Create'}</button>
-//         </Form>
-//     )
-// }

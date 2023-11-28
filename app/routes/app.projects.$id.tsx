@@ -1,21 +1,23 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 import { supabaseClient } from "utils/supabase";
 import { v4 as uuid } from 'uuid';
+import CreateTaskDialog from "~/components/kanban/create-task-dialog";
 import TasksKanban from "~/components/kanban/tasks-kanban";
 import { Button } from "~/components/ui/button";
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
     const { id: projectId } = params
-    // if (!projectId) return json({ errorCode: 'not_found' }, { status: 401 })
+    if (!projectId) return json({ errorCode: 'not_found', project: null }, { status: 401 })
 
     const client = supabaseClient({ request });
-    const { data: project } = await client.from('projects').select('id, title, description, tasks (id, title, description)').eq('id', projectId!).single()
+    const { data: project, error } = await client.from('projects').select('id, title, description, tasks (id, title, description, status)').eq('id', projectId!).single()
 
-    // if (error) return json({ errorCode: 'not_found' }, { status: 500 })
+    if (error) return json({ errorCode: 'not_found', project: null }, { status: 500 })
 
-    return json({ project })
+    return json({ project, errorCode: null })
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -43,8 +45,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     return json({ data })
 }
 
-export default function Project() {
+export default function ProjectDetails() {
     const { project } = useLoaderData<typeof loader>()
+    const [modalOpen, setModalOpen] = useState(false)
 
     return (
         <section className="p-4 gap-2 h-full">
@@ -54,29 +57,11 @@ export default function Project() {
                     <p>{project?.description}</p>
                 </div>
                 <div className="flex justify-end">
-                    <Button size='sm'>New Task</Button>
+                    <Button size='sm' onClick={() => setModalOpen(true)}>New Task</Button>
                 </div>
-                <TasksKanban />
+                <TasksKanban tasks={project?.tasks ?? []} />
             </section>
+            <CreateTaskDialog open={modalOpen} onOpenChange={setModalOpen} />
         </section>
     )
 }
-
-// function TasksForm() {
-//     const [description, setDescription] = useState('')
-//     const [title, setTitle] = useState('')
-//     const navigate = useNavigation()
-//     const isSubmitting = navigate.state === 'submitting'
-
-//     return (
-//         <div>
-//             <h2 c lassName="text-base font-medium mb-4">Create Tasks</h2>
-//             <Form method="POST" className="max-w-sm mb-4 flex flex-col gap-4 items-start">
-//                 <input className="border px-3 py-2 w-full" name="title" id="title" placeholder="Title" value={title} onChange={ev => setTitle(ev.target.value)} />
-//                 <textarea value={description} onChange={ev => setDescription(ev.target.value)} className="border px-3 py-2 w-full" name="title" id="description" placeholder="Description" />
-//                 <button className="bg-gray-200 border px-5 py-1 disabled:pointer-events-none disabled:opacity-50" disabled={isSubmitting}>{isSubmitting ? 'Creating' : 'Create'}</button>
-//             </Form>
-//         </div>
-//     )
-// }
-

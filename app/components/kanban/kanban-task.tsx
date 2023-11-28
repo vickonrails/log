@@ -1,8 +1,8 @@
 import { Draggable } from 'react-beautiful-dnd';
-import type { Task } from 'types';
 import { cn } from 'utils/cn';
+import type { TasksForKanban } from './tasks-kanban';
 
-export default function KanbanTask({ task, index }: { task: Task, index: number }) {
+export default function KanbanTask({ task, index }: { task: TasksForKanban, index: number }) {
     return (
         <Draggable draggableId={task.id} index={index}>
             {(provided, snapshot) => (
