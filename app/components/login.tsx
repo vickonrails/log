@@ -1,18 +1,29 @@
 import { useOutletContext } from "@remix-run/react"
 import { type SupabaseClient } from "@supabase/supabase-js"
+import { LucideLoader } from "lucide-react"
 import { useState, type FormEvent } from "react"
+import { cn } from "utils/cn"
+import Logo from "./logo"
+import { Button } from "./ui/button"
+import { Input } from "./ui/input"
 
 export default function Login() {
     const { supabase } = useOutletContext<{ supabase: SupabaseClient }>()
     const [email, setEmail] = useState('')
-    // const [password, setPassword] = useState('')
+    const [emailSent, setEmailSent] = useState(false)
+    const [formError, setFormError] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleEmailLogin = async (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault()
+        setFormError('')
 
-        if (email === '') return;
+        if (email === '') {
+            setFormError('please enter a valid email address')
+            return
+        }
 
-        console.log(email)
+        setIsSubmitting(true)
         const { data, error } = await supabase.auth.signInWithOtp({
             email,
             options: {
@@ -20,34 +31,48 @@ export default function Login() {
             }
         })
 
+        setIsSubmitting(false)
         if (error) {
             console.log(error)
             alert(`Error: ${error.message}`)
             return;
         }
-        if (data) alert(`Check email for login link`)
+
+        if (data) {
+            setEmailSent(true)
+        }
     }
 
-    const handleGitHubLogin = async () => {
-        await supabase.auth.signInWithOAuth({
-            provider: 'github',
-            options: {
-                redirectTo: 'http://localhost:3000/auth/callback',
-            },
-        })
+    const updateEmail = (ev: FormEvent<HTMLInputElement>) => {
+        if (formError) setFormError('')
+        setEmail(ev.currentTarget.value)
     }
 
-    // TODO: switch to the remix form
     return (
-        <section className="max-w-sm mx-auto mt-16">
-            <form className="flex flex-col gap-2 mb-5" onSubmit={handleEmailLogin}>
-                <input autoFocus type="email" className="border px-3 py-2" onChange={ev => setEmail(ev.target.value)} value={email} />
-                {/* <input type="password" className="border px-3 py-2" onChange={ev => setPassword(ev.target.value)} value={password} /> */}
-                <button className="bg-gray-200 border px-2 py-1">Get Magic Link</button>
+        <section className="max-w-sm mx-auto mt-16 flex flex-col gap-8">
+            <Logo />
+            <form className="flex flex-col gap-3 mb-5" onSubmit={handleEmailLogin}>
+                <Input
+                    label="Email address"
+                    autoFocus
+                    type="email"
+                    className="text-base"
+                    onChange={updateEmail}
+                    value={email}
+                />
+                {formError && <p className="text-sm text-red-500 py-3 px-2 bg-red-50 rounded-sm">Please enter a valid email address</p>}
+                {emailSent && <p className="text-sm text-green-700 py-3 px-2 bg-green-100 rounded-sm">An email has been sent to your email address</p>}
+                <Button disabled={emailSent} className="text-base">
+                    {isSubmitting ? (
+                        <LucideLoader
+                            size={18}
+                            className={cn('animate-spin')}
+                        />
+                    ) :
+                        'Get Magic Link'
+                    }
+                </Button>
             </form>
-            <div className="flex justify-center items-center gap-2">
-                <button className="border px-2 py-1" onClick={handleGitHubLogin}>GitHub Login</button>
-            </div>
         </section>
     )
 }

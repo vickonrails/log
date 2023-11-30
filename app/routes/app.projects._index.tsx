@@ -1,5 +1,6 @@
 import { json, type ActionFunctionArgs, type LoaderFunctionArgs } from "@remix-run/node"
-import { useLoaderData } from "@remix-run/react"
+import { useLoaderData, useOutletContext } from "@remix-run/react"
+import type { SupabaseClient } from "@supabase/supabase-js"
 import { useState } from "react"
 import { supabaseClient } from "utils/supabase"
 import { v4 as uuid } from 'uuid'
@@ -37,16 +38,22 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function Projects() {
+    const { supabase } = useOutletContext<{ supabase: SupabaseClient }>()
     const { projects } = useLoaderData<typeof loader>()
     const [modalOpen, setModalOpen] = useState(false);
+
+    const logout = async () => {
+        await supabase.auth.signOut();
+    }
 
     return (
         <section className=" flex flex-col gap-4">
             <section className="p-4 flex flex-col gap-2">
-                <div className="pt-4 pb-4">
+                <div className="flex items-center justify-between py-4">
                     <Logo />
+                    <Button size='sm' variant="outline" onClick={logout}>Log Out</Button>
                 </div>
-                <div className="flex justify-end">
+                <div className="flex justify-end mb-2">
                     <Button
                         size='sm'
                         onClick={() => setModalOpen(true)}

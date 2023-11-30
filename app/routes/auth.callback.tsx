@@ -16,7 +16,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
         await supabaseClient.auth.exchangeCodeForSession(code)
     }
 
-    return redirect('/', {
+    return redirect('/app/projects', {
         headers: response.headers,
     })
 }
