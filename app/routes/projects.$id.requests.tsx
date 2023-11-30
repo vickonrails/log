@@ -1,9 +1,12 @@
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
+import { LucideLoader } from "lucide-react";
+import { createRef, useEffect } from "react";
 import { json } from "react-router";
 import type { FeatureRequest } from "types";
 import { supabaseClient } from "utils/supabase";
 import { v4 as uuid } from 'uuid';
+import { resetFetcher } from "~/components/kanban/create-task-dialog";
 import { FeatureRequest as FeatureRequestCmp } from "~/components/request";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
@@ -33,24 +36,45 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const title = formData.get('title') as string
 
     // TODO: handle error
-    const { data } = await client.from('feature_requests').insert({
+    const { error } = await client.from('feature_requests').insert({
         id: uuid(),
         title,
         project_id: projectId
     })
 
-    return json({ data })
+    return json({ ok: true, error })
 }
 
 export default function ProjectRequests() {
+    const fetcher = useFetcher();
     const { featureRequests } = useLoaderData<{ featureRequests: FeatureRequest[] }>()
+    const formRef = createRef<HTMLFormElement>()
+    const submitting = fetcher.state === 'submitting'
+
+    useEffect(() => {
+        if (fetcher.data) {
+            formRef.current?.reset()
+            resetFetcher(fetcher)
+        }
+    }, [fetcher.state])
+
+    const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
+        ev.preventDefault()
+        fetcher.submit(ev.currentTarget)
+    }
 
     return (
         <section className="max-w-2xl w-full mx-auto flex flex-col gap-4 pt-6">
-            <Form className="flex flex-col items-start gap-3 [&>label]:w-full" method="POST">
+            <fetcher.Form ref={formRef} onSubmit={handleSubmit} className="flex flex-col items-start gap-3 [&>label]:w-full" method="POST">
                 <Textarea label="Feature" name="title" className="w-full" />
-                <Button>Add Request</Button>
-            </Form>
+                <Button>
+                    {submitting ? (
+                        <LucideLoader
+                            className="animate-spin"
+                        />
+                    ) : 'Add Request'}
+                </Button>
+            </fetcher.Form>
 
             <hr className="my-4" />
 

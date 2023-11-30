@@ -32,15 +32,14 @@ export async function action({ request, params }: ActionFunctionArgs) {
     const description = formData.get('description') as string
     const status = formData.get('status') as string
 
-    let { count, error } = await client.from('tasks')
+    let { count, error: tasksError } = await client.from('tasks')
         .select('id', { count: 'exact', head: true })
         .eq('project_id', projectId!)
         .eq('status', status);
 
-    if (error) return json({ message: 'Error creating task' }, { status: 500 })
+    if (tasksError) return json({ message: 'Error creating task' }, { status: 500 })
 
-    // TODO: handle error
-    const { data } = await client.from('tasks').insert({
+    const { error } = await client.from('tasks').insert({
         id: uuid(),
         title,
         description,
@@ -50,7 +49,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
         column_order: count || 0
     })
 
-    return json({ data })
+    return json({ ok: true, error })
 }
 
 export default function ProjectDetails() {
