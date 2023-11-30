@@ -9,7 +9,6 @@ import { Textarea } from '../ui/textarea'
 export default function CreateTaskDialog(props: DialogProps) {
     const [description, setDescription] = useState('')
     const [title, setTitle] = useState('')
-    const [status, setStatus] = useState('0')
 
     return (
         <Dialog {...props}>
@@ -20,7 +19,7 @@ export default function CreateTaskDialog(props: DialogProps) {
                         <Form method='POST' className='flex flex-col gap-4'>
                             <Input label='Title' placeholder='Enter title...' name='title' value={title} onChange={ev => setTitle(ev.target.value)} />
                             <Textarea label='Description' placeholder='Enter description...' name='description' value={description} onChange={ev => setDescription(ev.target.value)} />
-                            <Input label='Status' placeholder='0 - 4' type='number' min='0' max='4' name='status' value={parseInt(status)} onChange={ev => setStatus(ev.target.value)} />
+                            <input hidden type='number' min='0' max='4' name='status' value={0} />
                             <Button>Create</Button>
                         </Form>
                     </DialogDescription>
